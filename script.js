@@ -10,31 +10,34 @@ var HEIGHT = window.innerHeight;
 var renderer, scene, camera, orbitcontrols, world;
 var clock = new THREE.Clock();
 var characterControls;
+var CharacterBody;
 //保存按键wasd的
 const keysPressed = {}
 // const keyDisplayQueue = new KeyDisplay();
-
+var jumpNumber = 0;
+const jumpSpeed = 0.1;
 init();
 
+if(!IsPhone()){
+    window.document.getElementById("test").style.display="none";
+    window.document.getElementsByClassName("div1")[0].style.display="none";
+    window.document.getElementsByClassName("div2")[0].style.display="none";
+    window.document.getElementsByClassName("div3")[0].style.display="none";
+}
 
 
+window.document.getElementById("test").addEventListener('touchstart', () => {
+    jumpNumber = 20;
+})
 
-    window.document.getElementById("test").addEventListener('touchstart', () => {
-        keysPressed['w'] = true;
-    })
-
-    window.document.getElementById("test").addEventListener('touchend', () => {
-        keysPressed['w'] = false;
-    })
-
-const geometry = new THREE.BoxGeometry(10, 2, 8);
+const geometry = new THREE.BoxGeometry(10, 1, 8);
 const texture = new THREE.TextureLoader().load('./imgs/ground.jpg');
 const material = new THREE.MeshLambertMaterial({ map: texture })//设置贴图
 const cube = new THREE.Mesh(geometry, material);
 cube.receiveShadow = true
 scene.add(cube);
 // 创建物理小球形状
-const sphereShape = new CANNON.Box(new CANNON.Vec3(5, 1, 4))//半径为一的球
+const sphereShape = new CANNON.Box(new CANNON.Vec3(5, 0.5, 4))//半径为一的球
 //设置物体材质
 const sphereWorldMaterial = new CANNON.Material();
 // 创建物理世界的物体
@@ -48,6 +51,15 @@ var sphereBody = new CANNON.Body({
 cube.userData = sphereBody;
 // 将物体添加至物理世界
 world.addBody(sphereBody);
+
+const loader = new GLTFLoader();
+loader.load('model/Xbot.glb', function (gltf) {
+    const model = gltf.scene;
+    model.rotation.y += Math.PI
+    scene.add(model);
+    model.scale.set(0.5,0.5,0.5);
+    model.position.set(2,0,0);
+})
 
 function addBox() {
     const geometry = new THREE.BoxGeometry(2, 2, 2);
@@ -71,12 +83,18 @@ function addBox() {
     cube.userData = sphereBody;
     // 将物体添加至物理世界
     world.addBody(sphereBody);
-    sphereBody.position.set(30, 2, 30);
+    sphereBody.position.set(2, 3, 2);
 }
 addBox();
 
 animate();
 function animate() {
+    if (jumpNumber > 0) {
+        CharacterBody.position.y += jumpSpeed;
+        console.log(jumpNumber);
+        jumpNumber--;
+    }
+
     let deltaTime = clock.getDelta();
     // 更新物理引擎里世界的物体
     world.step(1 / 120, deltaTime);
@@ -96,8 +114,9 @@ function animate() {
 }
 
 document.addEventListener('keydown', (event) => {
-    // keyDisplayQueue.down(event.key)
-    if (event.shiftKey && characterControls) {
+    if (event.code == "Space") {
+        jumpNumber = 20;
+    } else if (event.shiftKey && characterControls) {
         characterControls.switchRunToggle()
     } else {
         keysPressed[event.key.toLowerCase()] = true
@@ -297,6 +316,7 @@ function initGlb() {
         model.userData = characterBody;
         // 将物体添加至物理世界
         world.addBody(characterBody);
+        CharacterBody = characterBody;
         characterControls = new CharacterControls(characterBody, mixer, animationsMap, orbitcontrols, camera, 'Idle', model); //Idle
         model.position.copy(characterBody.position);
     })
@@ -318,4 +338,11 @@ window.addEventListener("orientationchange", function () {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-
+function IsPhone() {
+    //获取浏览器navigator对象的userAgent属性（浏览器用于HTTP请求的用户代理头的值）
+    var info = navigator.userAgent;
+    //通过正则表达式的test方法判断是否包含“Mobile”字符串
+    var isPhone = /mobile/i.test(info);
+    //如果包含“Mobile”（是手机设备）则返回true
+    return isPhone;
+}

@@ -11,12 +11,12 @@
 
         #test {
             position: absolute;
-            left: 50%;
+            left: 15%;
             top: 80%;
             transform: translate(-50%, -50%);
             background-color: rgb(100, 100, 100);
-            width: 200px;
-            height: 50px;
+            width: 80px;
+            height: 80px;
         }
 
         #text {
@@ -27,20 +27,95 @@
             user-select: none;
             background: #eee;
         }
+
+        .div1 {
+            width: 200px;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 100%;
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            margin-left: -100px;
+            margin-top: -100PX;
+        }
+
+        .div2 {
+            width: 50px;
+            height: 50px;
+            background: rgb(255, 255, 255);
+            border-radius: 100%;
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            margin-left: -25px;
+            margin-top: -25px;
+        }
+
+        .div3 {
+            width: 200px;
+            height: 200px;
+            border-radius: 100%;
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            margin-left: -100px;
+            margin-top: -100PX;
+        }
     </style>
     <meta charset="UTF-8">
-    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"  name="viewport" />
-    <title>3Dyunyou</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <title>3D景区云游</title>
     <script type="module" src="script.js"></script>
 </head>
 
 <body>
     <div id="test">
         <div id="text" align="center">
-            <h5>前进测试</h5>
+            <h5>跳跃</h5>
         </div>
     </div>
     <div id="container"></div>
+
+
+
+    <div class="div1"></div>
+    <div class="div2"></div>
+    <div class="div3"></div>
+
+    <script>
+        window.rad = 0;
+        window.d = 0;
+        let div3 = document.querySelector('.div3')
+        let div2 = document.querySelector('.div2')
+        let r = 25		//摇杆的半径
+        let r2 = 100	//底盘的半径
+        let x = div2.offsetLeft + r		//加上r半径的偏移到中心
+        let y = div2.offsetTop + r
+        div3.ontouchmove = (e) => {
+            let t = e.changedTouches[0]
+            //开根 触摸点到摇杆中心点的距离
+            let d = Math.sqrt(Math.pow(t.pageX - x, 2) + Math.pow(t.pageY - y, 2))
+            d = d > (r2 - r) ? r2 - r : d
+            //三角函数求反正切 减去xy偏移到中心点
+            let radin = Math.atan2(t.pageY - y, t.pageX - x)
+            let vx = x + Math.cos(radin) * d
+            let vy = y + Math.sin(radin) * d
+            div2.style.left = vx + 'px'
+            div2.style.top = vy + 'px'
+            window.rad = radin;
+            window.d = d;
+            console.log(180 / Math.PI * window.rad);
+            console.log(window.d);
+        }
+        div3.ontouchend = () => {
+            div2.style.left = x + 'px'
+            div2.style.top = y + 'px'
+            window.d = 0;
+            console.log(window.d);
+        }
+    </script>
+
 </body>
 
 </html>
