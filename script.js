@@ -34,7 +34,8 @@ const geometry = new THREE.BoxGeometry(10, 1, 8);
 const texture = new THREE.TextureLoader().load('./imgs/ground.jpg');
 const material = new THREE.MeshLambertMaterial({ map: texture })//设置贴图
 const cube = new THREE.Mesh(geometry, material);
-cube.receiveShadow = true
+cube.receiveShadow = true;
+cube.castShadow = true;
 scene.add(cube);
 // 创建物理小球形状
 const sphereShape = new CANNON.Box(new CANNON.Vec3(5, 0.5, 4))//半径为一的球
@@ -59,6 +60,10 @@ loader.load('model/Xbot.glb', function (gltf) {
     scene.add(model);
     model.scale.set(0.5,0.5,0.5);
     model.position.set(2,0,0);
+    model.receiveShadow = true;
+    model.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+    });
 })
 
 function addBox() {
@@ -67,6 +72,7 @@ function addBox() {
     const material = new THREE.MeshLambertMaterial({ map: texture })//设置贴图
     const cube = new THREE.Mesh(geometry, material);
     cube.receiveShadow = true
+    cube.castShadow = true;
     scene.add(cube);
     // 创建物理小球形状
     const sphereShape = new CANNON.Box(new CANNON.Vec3(1, 1, 1))//半径为一的球
