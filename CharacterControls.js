@@ -12,8 +12,6 @@ export class CharacterControls {
 		this.animationsMap = animationsMap
 		this.currentAction = currentAction
 		this.animationsMap.forEach((value, key) => {
-			//key Idle Run Walk
-			console.log("currentAction:" + currentAction)
 			if (key == currentAction) {
 				value.play()
 			}
@@ -39,19 +37,6 @@ export class CharacterControls {
 		//走路速度
 		this.walkVelocity = 2
 		this.DIRECTIONS = ['w', 'a', 's', 'd']
-		this.updateCameraTarget(0, 0)
-	}
-
-	updateCameraTarget(moveX, moveZ) {
-		//移动相机
-		this.camera.position.x += moveX;
-		this.camera.position.z += moveZ;
-
-		// 更新相机的target
-		this.cameraTarget.x = this.model.position.x
-		this.cameraTarget.y = this.model.position.y + 1
-		this.cameraTarget.z = this.model.position.z
-		this.orbitControl.target = this.cameraTarget
 	}
 
 	switchRunToggle() {
