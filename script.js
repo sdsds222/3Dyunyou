@@ -15,14 +15,14 @@ var CharacterBody;
 const keysPressed = {}
 // const keyDisplayQueue = new KeyDisplay();
 var jumpNumber = 0;
-const jumpSpeed = 0.1;
+const jumpSpeed = 0.2;
 init();
 
-if(!IsPhone()){
-    window.document.getElementById("test").style.display="none";
-    window.document.getElementsByClassName("div1")[0].style.display="none";
-    window.document.getElementsByClassName("div2")[0].style.display="none";
-    window.document.getElementsByClassName("div3")[0].style.display="none";
+if (!IsPhone()) {
+    window.document.getElementById("test").style.display = "none";
+    window.document.getElementsByClassName("div1")[0].style.display = "none";
+    window.document.getElementsByClassName("div2")[0].style.display = "none";
+    window.document.getElementsByClassName("div3")[0].style.display = "none";
 }
 
 
@@ -58,8 +58,8 @@ loader.load('model/Xbot.glb', function (gltf) {
     const model = gltf.scene;
     model.rotation.y += Math.PI
     scene.add(model);
-    model.scale.set(0.5,0.5,0.5);
-    model.position.set(2,0,0);
+    model.scale.set(0.5, 0.5, 0.5);
+    model.position.set(2, 0, 0);
     model.receiveShadow = true;
     model.traverse(function (object) {
         if (object.isMesh) object.castShadow = true;
@@ -317,7 +317,7 @@ function initGlb() {
             //   小球质量
             mass: 10,
             //   物体材质
-            material: new CANNON.Material(),
+            material: new CANNON.Material({ friction: 0.1, restitution: 0 }),
         });
         model.userData = characterBody;
         // 将物体添加至物理世界

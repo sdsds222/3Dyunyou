@@ -1,4 +1,5 @@
 import * as THREE from './js/three.module.js'
+import * as CANNON from './js/cannon-es.js'
 
 /**
  * 封装第三人称类
@@ -156,6 +157,7 @@ export class CharacterControls {
 
 		this.model1.position.copy(this.model.position);
 		this.model1.position.y = this.model.position.y - 0.95;
+		this.model.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), 0);
 	}
 	IsPhone() {
 		//获取浏览器navigator对象的userAgent属性（浏览器用于HTTP请求的用户代理头的值）
